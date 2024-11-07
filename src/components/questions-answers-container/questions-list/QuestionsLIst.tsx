@@ -13,9 +13,9 @@ const QuestionsLIst = () => {
         <li
           className={`option ${option.isActive ? "activeOption" : ""}`}
           onClick={() => {
-            selectQuestionAnswer(option.questId);
+            selectQuestionAnswer(option.optionId);
           }}
-          key={option.questId}
+          key={option.optionId}
         >
           <div className="radioCheckIcon ">
             {option.isActive ? (

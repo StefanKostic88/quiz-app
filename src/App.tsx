@@ -4,17 +4,21 @@ import {
   QuestionAnswerContainer,
   Result,
 } from "./components";
+import { useQuestion } from "./context/questions-context/QuestionsContext";
 
 function App() {
-  return (
-    <div className="App">
-      <div className="quizContainer">
-        <QuestionsContainer />
-        <QuestionAnswerContainer />
-      </div>
-      <Result />
+  const { showResults } = useQuestion();
+
+  const showedComponents = showResults ? (
+    <Result />
+  ) : (
+    <div className="quizContainer">
+      <QuestionsContainer />
+      <QuestionAnswerContainer />
     </div>
   );
+
+  return <div className="App">{showedComponents}</div>;
 }
 
 export default App;
