@@ -2,6 +2,7 @@ import { useQuestion } from "../../context/questions-context/QuestionsContext";
 
 const QuestionsContainer = () => {
   const { currentQuestion } = useQuestion();
+
   return (
     <div className="leftContainer">
       <div className="leftContainerInner">

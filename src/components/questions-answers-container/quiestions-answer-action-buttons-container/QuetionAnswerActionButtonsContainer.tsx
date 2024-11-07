@@ -4,21 +4,20 @@ import {
 } from "react-icons/md";
 import { useQuestion } from "../../../context/questions-context/QuestionsContext";
 
-// className={`btn ${next <= 0 ? "btn-disable" : null}`}
-// onClick={next <= 0 ? null : onPrevClick}
-
 const QuetionAnswerActionButtonsContainer = () => {
   const {
     currentQuestion: { questionNumber, options },
     setNextPage,
     setPrevPage,
+    questionsCount,
+    getResults,
   } = useQuestion();
 
   const isFirstPage = questionNumber === 1;
   const optionsNotSelected = options.every(
     (option) => option.isActive === false
   );
-  const lastPage = questionNumber === 2;
+  const lastPage = questionNumber === questionsCount;
 
   const onNextPageHandler = () => {
     setNextPage();
@@ -27,6 +26,32 @@ const QuetionAnswerActionButtonsContainer = () => {
   const onPrevPageHandler = () => {
     setPrevPage();
   };
+
+  const onGetResultsHandler = () => {
+    getResults();
+  };
+
+  const nextButtonComponent = (
+    <button
+      disabled={optionsNotSelected}
+      className={`btn btn-primary ${
+        (optionsNotSelected && "btn-disable") || (lastPage && "btn-disable")
+      }`}
+      onClick={onNextPageHandler}
+    >
+      Next
+      <MdOutlineKeyboardDoubleArrowRight size={20} />
+    </button>
+  );
+
+  const resultButtonComponent = (
+    <button
+      className={`btn btn-primary ${optionsNotSelected && "btn-disable"}`}
+      onClick={onGetResultsHandler}
+    >
+      Results
+    </button>
+  );
 
   return (
     <div className="actionButtons">
@@ -38,16 +63,7 @@ const QuetionAnswerActionButtonsContainer = () => {
         <MdOutlineKeyboardDoubleArrowLeft size={20} />
         previous
       </button>
-      <button
-        disabled={optionsNotSelected || lastPage}
-        className={`btn btn-primary ${
-          (optionsNotSelected && "btn-disable") || (lastPage && "btn-disable")
-        }`}
-        onClick={onNextPageHandler}
-      >
-        Next
-        <MdOutlineKeyboardDoubleArrowRight size={20} />
-      </button>
+      {lastPage ? resultButtonComponent : nextButtonComponent}
     </div>
   );
 };

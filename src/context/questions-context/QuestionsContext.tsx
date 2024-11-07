@@ -1,12 +1,18 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { questions } from "../../constants/questions";
+import React, { createContext, useContext } from "react";
+
 import { Question } from "../../models/questions";
+import useQuestionsData from "../../hooks/useQuestionsData";
+import useResultsData from "../../hooks/useResultsData";
 
 interface QuestionContextInterface {
   currentQuestion: Question;
   selectQuestionAnswer: (answerId: number) => void;
   setNextPage: () => void;
   setPrevPage: () => void;
+  getResults: () => void;
+  questionsCount: number;
+  showResults: boolean;
+  graphData: number[];
 }
 
 const QuestionContext = createContext<QuestionContextInterface | null>(null);
@@ -14,35 +20,30 @@ const QuestionContext = createContext<QuestionContextInterface | null>(null);
 export const QuestionContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [allQuestion, setAllQuestion] = useState<Question[]>(questions);
-  const [questionCount, setQuestionCount] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState<Question>(
-    questions[questionCount]
-  );
+  const {
+    allQuestion,
+    setAllQuestion,
+    setQuestionCount,
+    currentQuestion,
+    setCurrentQuestion,
+    updateQuestionHelper,
+    updateAllQuestionsHelper,
+  } = useQuestionsData();
+
+  const { showResults, setResultsArray, generateGradeArray, graphData } =
+    useResultsData();
 
   const selectQuestionAnswer = (answerId: number) => {
-    setCurrentQuestion((prevState) => {
-      const updatedOptions = prevState.options.map((option) =>
-        option.questId === answerId
-          ? { ...option, isActive: true }
-          : { ...option, isActive: false }
-      );
-      return { ...prevState, options: [...updatedOptions] };
-    });
+    setCurrentQuestion((prevState) => ({
+      ...prevState,
+      options: [...updateQuestionHelper(answerId, prevState)],
+    }));
   };
 
   const setNextPage = () => {
-    setAllQuestion((prevState) => {
-      const updatedQuestions = prevState.map((question) => {
-        if (question.questId === currentQuestion.questId) {
-          return currentQuestion;
-        } else {
-          return question;
-        }
-      });
-      return updatedQuestions;
-    });
-
+    setAllQuestion((prevState) =>
+      updateAllQuestionsHelper(prevState, currentQuestion)
+    );
     setQuestionCount((prevCount) => prevCount + 1);
   };
 
@@ -50,15 +51,27 @@ export const QuestionContextProvider: React.FC<{
     setQuestionCount((prevCount) => prevCount - 1);
   };
 
-  useEffect(() => {
-    setCurrentQuestion(() => allQuestion[questionCount]);
-  }, [questionCount, allQuestion]);
+  const getResults = () => {
+    setAllQuestion((prevState) => {
+      const updatedQuestions = updateAllQuestionsHelper(
+        prevState,
+        currentQuestion
+      );
+      const newResultsArray = generateGradeArray(updatedQuestions);
+      setResultsArray(() => [...newResultsArray]);
+      return updatedQuestions;
+    });
+  };
 
   const contextStat: QuestionContextInterface = {
     currentQuestion,
     selectQuestionAnswer,
     setNextPage,
     setPrevPage,
+    questionsCount: allQuestion.length,
+    getResults,
+    showResults,
+    graphData,
   };
 
   return (
