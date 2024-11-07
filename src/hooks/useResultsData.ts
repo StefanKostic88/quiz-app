@@ -17,6 +17,7 @@ const generateGradeArray = (allQuestion: Question[]) => {
 const useResultsData = () => {
   const [resultsArray, setResultsArray] = useState<Grade[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [graphData, setGraphData] = useState<number[]>([]);
 
   useEffect(() => {
     if (resultsArray.length === 0) return;
@@ -28,7 +29,8 @@ const useResultsData = () => {
 
     const resultDataService = new ResultDataService(resultsArray);
     const finalData = resultDataService.filterAll().companyGraphPerecnts;
-  }, [showResults]);
+    setGraphData(() => finalData);
+  }, [showResults, resultsArray]);
 
   return {
     resultsArray,
@@ -36,6 +38,7 @@ const useResultsData = () => {
     showResults,
     setShowResults,
     generateGradeArray,
+    graphData,
   };
 };
 

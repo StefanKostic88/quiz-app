@@ -2,7 +2,7 @@ import "./App.css";
 import {
   QuestionsContainer,
   QuestionAnswerContainer,
-  Result,
+  Graph,
 } from "./components";
 import { useQuestion } from "./context/questions-context/QuestionsContext";
 
@@ -10,7 +10,7 @@ function App() {
   const { showResults } = useQuestion();
 
   const showedComponents = showResults ? (
-    <Result />
+    <Graph />
   ) : (
     <div className="quizContainer">
       <QuestionsContainer />

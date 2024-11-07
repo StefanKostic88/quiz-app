@@ -32,10 +32,10 @@ export class ResultDataService {
 
   public filterAll() {
     this.graphPerents = this.companyConstantData
-      .map((t) => {
-        return this.filterData(this.dataArr, t.data);
+      .map(({ data }) => {
+        return this.filterData(this.dataArr, data);
       })
-      .map((d) => this.generatePercents(d));
+      .map((grade) => this.generatePercents(grade));
 
     return this;
   }

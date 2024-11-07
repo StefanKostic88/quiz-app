@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext } from "react";
 
 import { Question } from "../../models/questions";
 import useQuestionsData from "../../hooks/useQuestionsData";
@@ -12,6 +12,7 @@ interface QuestionContextInterface {
   getResults: () => void;
   questionsCount: number;
   showResults: boolean;
+  graphData: number[];
 }
 
 const QuestionContext = createContext<QuestionContextInterface | null>(null);
@@ -29,7 +30,8 @@ export const QuestionContextProvider: React.FC<{
     updateAllQuestionsHelper,
   } = useQuestionsData();
 
-  const { showResults, setResultsArray, generateGradeArray } = useResultsData();
+  const { showResults, setResultsArray, generateGradeArray, graphData } =
+    useResultsData();
 
   const selectQuestionAnswer = (answerId: number) => {
     setCurrentQuestion((prevState) => ({
@@ -69,6 +71,7 @@ export const QuestionContextProvider: React.FC<{
     questionsCount: allQuestion.length,
     getResults,
     showResults,
+    graphData,
   };
 
   return (
